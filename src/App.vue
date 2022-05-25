@@ -3,57 +3,36 @@
             class="wrapper"
             :class="cssClass"
     >
-        <iframe
-                class="fullScreen"
-                :src="videoUrl"
-                frameborder="0"
-                seamless="seamless"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                width="100%"
-                height="100%"
-        />
+        <broadcast/>
     </div>
 </template>
 
 <script>
-
+import broadcast from './components/broadcast/broadcast'
 import data from './data.json'
 
 export default {
     name: 'App',
+    components: {
+        broadcast
+    },
     data() {
         return {
-            cssClass: []
-        }
-    },
-    computed: {
-        videoUrl() {
-            const lng = window.navigator.userLanguage || window.navigator.language;
-            let haveUrl = false
-            let videoUrl = ''
-            data.broadcasts.forEach(broadcast=> {
-                if (broadcast.lang === lng) {
-                    videoUrl = broadcast.url
-                    haveUrl = true
-                }
-            })
-            if (!haveUrl) {
-                videoUrl = data.defaultUrl
-            }
-            return videoUrl
+            cssClass: [],
+            interval: null
         }
     },
     async mounted() {
-        if (await this.getTime() >= data.changeCss.timestamp) {
-            this.cssClass = [data.changeCss.cssClass]
-        } else {
-            const interval = setInterval(async () => {
-                if (await this.getTime() >= data.changeCss.timestamp) {
-                    this.cssClass = [data.changeCss.cssClass]
-                    clearInterval(interval)
-                }
-            }, 1000)
+        this.interval = setInterval(async () => {
+            if (await this.getTime() >= data.changeCss.timestamp) {
+                this.cssClass = [data.changeCss.cssClass]
+                clearInterval(this.interval)
+            }
+        }, 1000)
+    },
+    unmounted() {
+        if (this.interval != null) {
+            clearInterval(this.interval)
         }
     },
     methods: {
@@ -94,10 +73,12 @@ body {
     height: 100vh;
     overflow: hidden;
 }
+
 #app {
     width: 100%;
     height: 100%;
 }
+
 .wrapper iframe {
     width: 100%;
     height: 100%;
