@@ -1,7 +1,7 @@
 <template>
     <iframe
             class="fullScreen"
-            :src="videoUrl"
+            :src="url"
             frameborder="0"
             seamless="seamless"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -12,15 +12,9 @@
 </template>
 
 <script>
-import data from "../../data.json";
 
 export default {
     name: 'Video',
-    computed: {
-        videoUrl() {
-            const lng = window.navigator.userLanguage || window.navigator.language;
-            return data.broadcasts.find((broadcast) => broadcast.lang === lng)?.url ?? data.defaultUrl;
-        }
-    },
+    props: ['url'],
 };
 </script>
