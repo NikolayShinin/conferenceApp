@@ -1,6 +1,8 @@
 <template>
     <div class="container">
         <select-field
+                :options="options"
+                :value="url"
                 @changeSelect="changeSelect"
         />
         <div
@@ -35,6 +37,16 @@ export default {
             return result.unixtime
         }
     },
+    computed: {
+        options () {
+            const options = data.broadcasts
+            options.push({
+                url: data.defaultUrl,
+                lang: 'other languages'
+            })
+            return options
+        }
+    },
     data() {
         return {
             url: '',
@@ -49,6 +61,8 @@ export default {
                 clearInterval(this.interval)
             }
         }, 1000)
+        const lng = window.navigator.userLanguage || window.navigator.language;
+        this.url = data.broadcasts.find((broadcast) => broadcast.lang === lng)?.url ?? data.defaultUrl;
     },
     unmounted() {
         if (this.interval != null) {

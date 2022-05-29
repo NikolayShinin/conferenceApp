@@ -1,37 +1,20 @@
 <template>
     <select
-            v-model="selected"
-            @change="$emit('changeSelect', selected)"
+            v-model="value"
+            @change="$emit('changeSelect', value)"
     >
         <option
-                v-for="option in data.broadcasts"
+                v-for="option in options"
                 :value="option.url"
         >
             {{ option.lang }}
-        </option>
-        <option
-                :value="data.defaultUrl"
-        >
-            other languages
         </option>
     </select>
 </template>
 
 <script>
-import data from "../../data.json";
-
 export default {
     name: 'SelectField',
-    data() {
-        return {
-            data,
-            selected: ''
-        }
-    },
-    mounted() {
-        const lng = window.navigator.userLanguage || window.navigator.language;
-        this.selected = data.broadcasts.find((broadcast) => broadcast.lang === lng)?.url ?? data.defaultUrl;
-        this.$emit('changeSelect', this.selected)
-    }
+    props:['options','value'],
 };
 </script>
